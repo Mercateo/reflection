@@ -1,13 +1,13 @@
 # com.mercateo.reflection
 
-## ProxyFactory -- create an intercepting proxy
+## ProxyFactory &mdash; create an intercepting proxy
 
 ```
     MethodInterceptor interceptor = ...
     TestClass proxy = ProxyFactory.createProxy(TestClass.class, interceptor);
 ```
 
-## Call -- A type safe variant for examination of method calls
+## Call &mdash; A type safe variant for examination of method calls
 
 Given an arbitrary class
 ```

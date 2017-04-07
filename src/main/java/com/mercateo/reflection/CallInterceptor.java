@@ -1,14 +1,12 @@
 package com.mercateo.reflection;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-
-class CallInterceptor<T> implements MethodInterceptor {
+class CallInterceptor<T> implements InvocationHandler {
 
     private static final Map<Method, Function<CallInterceptor<?>, ?>> PASS_THROUGHS = new HashMap<>();
     static {
@@ -37,7 +35,7 @@ class CallInterceptor<T> implements MethodInterceptor {
     }
 
     @Override
-    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
+    public Object invoke(Object obj, Method method, Object[] args) {
 
         if (PASS_THROUGHS.containsKey(method)) {
             return PASS_THROUGHS.get(method).apply(this);
