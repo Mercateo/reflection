@@ -36,6 +36,20 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <id>andreas_wuerl</id>
+            <name>Andreas Würl</name>
+            <email>andreas.wuerl@mercateo.com</email>
+            <url>http://www.mercateo.com</url>
+            <organization>Mercateo AG</organization>
+            <organizationUrl>http://www.mercateo.com</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
     <scm>
         <connection>scm:git:ssh://git@bitbucket.mercateo.lan:7999/~andreas.wuerl/reflection.git</connection>
         <url>https://github.com/Mercateo/reflection.git</url>
