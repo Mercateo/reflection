@@ -1,7 +1,5 @@
 package com.mercateo.reflection.proxy;
 
-import static net.bytebuddy.description.modifier.Visibility.PRIVATE;
-import static net.bytebuddy.matcher.ElementMatchers.any;
 import static net.bytebuddy.matcher.ElementMatchers.isDeclaredBy;
 import static net.bytebuddy.matcher.ElementMatchers.not;
 
@@ -9,32 +7,39 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.matcher.ElementMatcher;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 import org.objenesis.instantiator.ObjectInstantiator;
-import org.omg.PortableInterceptor.Interceptor;
 
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.implementation.InvocationHandlerAdapter;
-import net.bytebuddy.implementation.MethodDelegation;
 
 public class ProxyFactory {
+
+    public static final Objenesis OBJENESIS = new ObjenesisStd();
+
+    public static final ElementMatcher.Junction<MethodDescription> NOT_DECLARED_BY_OBJECT = not(isDeclaredBy(Object.class));
 
     @SuppressWarnings("unchecked")
     public static <T> T createProxy(Class<T> clazz, InvocationHandler invocationHandler, Class<?>... interfaces) {
         checkClassForFinalPublicMethods(clazz);
         try {
             final Class<? extends T> loaded = new ByteBuddy()
+                .with(TypeValidation.DISABLED)
                 .subclass(clazz)
                 .implement(interfaces)
-                .method(not(isDeclaredBy(Object.class)))
+                .method(NOT_DECLARED_BY_OBJECT)
                 .intercept(InvocationHandlerAdapter.of(invocationHandler))
                 .make()
-                .load(clazz.getClassLoader())
+                .load(clazz.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                 .getLoaded();
 
-            Objenesis objenesis = new ObjenesisStd(); // or ObjenesisSerializer
-            ObjectInstantiator thingyInstantiator = objenesis.getInstantiatorOf(loaded);
+            ObjectInstantiator thingyInstantiator = OBJENESIS.getInstantiatorOf(loaded);
             return (T) thingyInstantiator.newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Error creating proxy for class " + clazz.getSimpleName(), e);
