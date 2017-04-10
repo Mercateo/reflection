@@ -4,7 +4,7 @@
 
     <artifactId>reflection</artifactId>
     <groupId>com.mercateo</groupId>
-    <version>1.2.6-SNAPSHOT</version>
+    <version>1.2.6</version>
 
     <name>reflection</name>
     <packaging>jar</packaging>
@@ -53,7 +53,7 @@
     <scm>
         <connection>scm:git:git@github.com:Mercateo/reflection.git</connection>
         <url>https://github.com/Mercateo/reflection.git</url>
-        <tag>HEAD</tag>
+        <tag>reflection-1.2.6</tag>
     </scm>
 
     <properties>
