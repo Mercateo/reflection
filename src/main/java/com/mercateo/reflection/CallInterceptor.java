@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-class CallInterceptor<T> implements InvocationHandler {
+public class CallInterceptor<T> implements InvocationHandler {
 
     private static final Map<Method, Function<CallInterceptor<?>, ?>> PASS_THROUGHS = new HashMap<>();
     static {
@@ -30,7 +30,7 @@ class CallInterceptor<T> implements InvocationHandler {
 
     private Class<T> invokedClass;
 
-    CallInterceptor(Class<T> clazz) {
+    public CallInterceptor(Class<T> clazz) {
         this.clazz = clazz;
     }
 
