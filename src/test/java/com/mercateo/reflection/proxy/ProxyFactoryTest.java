@@ -51,6 +51,8 @@ public class ProxyFactoryTest {
         verifyZeroInteractions(interceptor);
     }
 
+
+
     public static class TestClass {
 
         TestClass delegate = mock(TestClass.class);

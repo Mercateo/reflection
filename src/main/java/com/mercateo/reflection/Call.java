@@ -1,9 +1,9 @@
 package com.mercateo.reflection;
 
-import com.mercateo.reflection.proxy.ProxyFactory;
-
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
+
+import com.mercateo.reflection.proxy.ProxyFactory;
 
 public class Call<T> {
 
@@ -20,9 +20,8 @@ public class Call<T> {
     }
 
     public static <T> Call<T> of(Class<T> clazz, Consumer<T> invocation) {
-        final T proxy = ProxyFactory.createProxy(clazz, new CallInterceptor<>(clazz),
-                CallInterceptor.InvocationRecorder.class);
-        invocation.accept((T) proxy);
+        final T proxy = ProxyFactory.createProxy(clazz);
+        invocation.accept(proxy);
 
         // noinspection unchecked
         return ((CallInterceptor.InvocationRecorder<T>) proxy).getInvocationRecordingResult();

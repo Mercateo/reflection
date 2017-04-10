@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import com.mercateo.reflection.CallInterceptor;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -24,6 +25,10 @@ public class ProxyFactory {
     public static final Objenesis OBJENESIS = new ObjenesisStd();
 
     public static final ElementMatcher.Junction<MethodDescription> NOT_DECLARED_BY_OBJECT = not(isDeclaredBy(Object.class));
+
+    public static <T> T createProxy(Class<T> clazz) {
+        return createProxy(clazz, new CallInterceptor<>(clazz), CallInterceptor.InvocationRecorder.class);
+    }
 
     @SuppressWarnings("unchecked")
     public static <T> T createProxy(Class<T> clazz, InvocationHandler invocationHandler, Class<?>... interfaces) {
