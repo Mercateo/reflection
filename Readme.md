@@ -3,7 +3,7 @@
 ## ProxyFactory &mdash; create an intercepting proxy
 
 ```
-    MethodInterceptor interceptor = ...
+    InvocationHandler interceptor = ...
     TestClass proxy = ProxyFactory.createProxy(TestClass.class, interceptor);
 ```
 

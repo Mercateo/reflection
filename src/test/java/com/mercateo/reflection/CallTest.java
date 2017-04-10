@@ -1,12 +1,10 @@
 package com.mercateo.reflection;
 
-
-import com.mercateo.reflection.Call;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Method;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 public class CallTest {
 
