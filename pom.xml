@@ -51,9 +51,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:ssh://git@bitbucket.mercateo.lan:7999/~andreas.wuerl/reflection.git</connection>
+        <connection>scm:git:git@github.com:Mercateo/reflection.git</connection>
         <url>https://github.com/Mercateo/reflection.git</url>
-        <tag>reflection-1.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
