@@ -24,7 +24,7 @@ public class Call<T> {
         invocation.accept(proxy);
 
         // noinspection unchecked
-        return ((CallInterceptor.InvocationRecorder<T>) proxy).getInvocationRecordingResult();
+        return ((InvocationRecorder<T>) proxy).getInvocationRecordingResult();
     }
 
     public static <T> Method methodOf(Class<T> clazz, Consumer<T> invocation) {

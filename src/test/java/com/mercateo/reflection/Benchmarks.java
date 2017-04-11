@@ -16,22 +16,21 @@ public class Benchmarks {
         }
     }
 
-    static Test proxy = ProxyFactory.createProxy(Test.class, new CallInterceptor<>(Test.class), CallInterceptor.InvocationRecorder.class);
+    static Test proxy = createProxy();
 
     @Benchmark
-    public static void createProxy() {
-        ProxyFactory.createProxy(Test.class, new CallInterceptor<>(Test.class));
+    public static Test createProxy() {
+        return ProxyFactory.createProxy(Test.class);
     }
 
     @Benchmark
     public static void interceptCall() {
         proxy.foo("bar");
 
-        ((CallInterceptor.InvocationRecorder<Test>) proxy).getInvocationRecordingResult();
+        ((InvocationRecorder<Test>) proxy).getInvocationRecordingResult();
     }
 
     public static void main(String[] args) throws RunnerException, InterruptedException {
-
         Options opt = new OptionsBuilder().warmupIterations(10).measurementIterations(10).forks(1).build();
 
         new Runner(opt).run();

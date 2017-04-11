@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-import com.mercateo.reflection.CallInterceptor.InvocationRecorder;
 import com.mercateo.reflection.proxy.ProxyFactory;
 
 public class InvocationRecorderTest {

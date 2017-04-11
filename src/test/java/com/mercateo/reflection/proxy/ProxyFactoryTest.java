@@ -1,5 +1,6 @@
 package com.mercateo.reflection.proxy;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -9,6 +10,8 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.lang.reflect.InvocationHandler;
 
+import com.mercateo.reflection.Call;
+import com.mercateo.reflection.CallInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,11 +23,12 @@ public class ProxyFactoryTest {
 
     private TestClass proxy;
 
-    @Mock
-    private InvocationHandler interceptor;
+    private CallInterceptor<TestClass> interceptor;
 
     @Before
     public void setUp() {
+        interceptor = new CallInterceptor<>(TestClass.class);
+
         proxy = ProxyFactory.createProxy(TestClass.class, interceptor);
     }
 
@@ -40,15 +44,19 @@ public class ProxyFactoryTest {
     public void proxyRecordsArguementsUsedForCall() throws Throwable {
         proxy.testMethod("bar");
 
-        verify(interceptor).invoke(eq(proxy), eq(TestClass.class.getDeclaredMethod("testMethod", String.class)), eq(
-                new Object[] { "bar" }));
+        final Call<TestClass> call = interceptor.getInvocationRecordingResult();
+
+        assertThat(call.declaringClass()).isEqualTo(TestClass.class);
+        assertThat(call.method()).isEqualTo(TestClass.class.getDeclaredMethod("testMethod", String.class));
+        assertThat(call.args()).containsExactly("bar");
     }
 
     @Test
     public void proxyDoesNotRecordCallsToObjectMethods() throws Throwable {
         proxy.toString();
 
-        verifyZeroInteractions(interceptor);
+        final Call<TestClass> call = interceptor.getInvocationRecordingResult();
+        assertThat(call.method()).isNull();
     }
 
 

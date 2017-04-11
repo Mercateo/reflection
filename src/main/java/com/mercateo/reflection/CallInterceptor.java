@@ -1,28 +1,14 @@
 package com.mercateo.reflection;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.concurrent.Callable;
 
-public class CallInterceptor<T> implements InvocationHandler {
+import net.bytebuddy.implementation.bind.annotation.AllArguments;
+import net.bytebuddy.implementation.bind.annotation.Origin;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.SuperCall;
 
-    private static final Map<Method, Function<CallInterceptor<?>, ?>> PASS_THROUGHS = new HashMap<>();
-    static {
-        try {
-            PASS_THROUGHS.put(InvocationRecorder.class.getMethod("getInvocationRecordingResult"),
-                    interceptor -> new Call<>(interceptor.invokedClass, interceptor.method,
-                            interceptor.args));
-
-            PASS_THROUGHS.put(Object.class.getMethod("toString"), interceptor -> "CallInterceptor("
-                    + interceptor.clazz.getSimpleName() + ")");
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("error initializing passThrough map", e);
-        }
-    }
-
-    private final Class<T> clazz;
+public class CallInterceptor<T> implements InvocationRecorder<T> {
 
     private Method method;
 
@@ -31,15 +17,11 @@ public class CallInterceptor<T> implements InvocationHandler {
     private Class<T> invokedClass;
 
     public CallInterceptor(Class<T> clazz) {
-        this.clazz = clazz;
     }
 
-    @Override
-    public Object invoke(Object obj, Method method, Object[] args) {
-
-        if (PASS_THROUGHS.containsKey(method)) {
-            return PASS_THROUGHS.get(method).apply(this);
-        }
+    @RuntimeType
+    public Object invoke(@SuperCall Callable<?> zuper, @AllArguments Object[] args, @Origin Method method,
+            @Origin Class clazz) {
 
         this.method = method;
         this.args = args;
@@ -76,7 +58,7 @@ public class CallInterceptor<T> implements InvocationHandler {
         }
     }
 
-    public interface InvocationRecorder<T> {
-        Call<T> getInvocationRecordingResult();
+    public Call<T> getInvocationRecordingResult() {
+        return new Call<T>(invokedClass, method, args);
     }
 }
