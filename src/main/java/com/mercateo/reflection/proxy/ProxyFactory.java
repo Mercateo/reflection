@@ -42,7 +42,7 @@ public class ProxyFactory {
                 .method(NOT_DECLARED_BY_OBJECT)
                 .intercept(to(methodDelegation))
                 .make()
-                .load(clazz.getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
+                .load(clazz.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                 .getLoaded();
 
             ObjectInstantiator thingyInstantiator = OBJENESIS.getInstantiatorOf(loaded);
