@@ -1,22 +1,19 @@
 package com.mercateo.reflection.proxy;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
-import java.lang.reflect.InvocationHandler;
-
-import com.mercateo.reflection.Call;
-import com.mercateo.reflection.CallInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import com.mercateo.reflection.Call;
+import com.mercateo.reflection.CallInterceptor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProxyFactoryTest {
@@ -59,14 +56,36 @@ public class ProxyFactoryTest {
         assertThat(call.method()).isNull();
     }
 
-
-
     public static class TestClass {
-
         TestClass delegate = mock(TestClass.class);
 
         void testMethod(String name) {
             delegate.testMethod(name);
+        }
+    }
+
+    @Test
+    public void failsWithFinalMethod() throws Exception {
+        assertThatThrownBy( //
+                () -> ProxyFactory.createProxy(FailingTestClass.class, new CallInterceptor<>(FailingTestClass.class)) //
+        )
+            .isInstanceOf(IllegalStateException.class) //
+            .hasMessage(
+                    "The proxied class candidate com.mercateo.reflection.proxy.ProxyFactoryTest$FailingTestClass contains a final method 'test'");
+    }
+
+    public static class FailingTestClass {
+        final public void test() {
+        }
+    }
+
+    @Test
+    public void skipsStaticMethod() throws Exception {
+        ProxyFactory.createProxy(NotFailingTestClass.class, new CallInterceptor<>(NotFailingTestClass.class));
+    }
+
+    public static class NotFailingTestClass {
+        static void test() {
         }
     }
 

@@ -61,8 +61,13 @@ public class ProxyFactory {
         Method[] methods = ct.getMethods();
         for (Method method : methods) {
             int modifiers = method.getModifiers();
-            if (Modifier.isFinal(modifiers) && !method.getDeclaringClass().equals(Object.class)) {
-                throw new IllegalStateException("The proxied class does not have to have any final public method!");
+            final boolean isStatic = Modifier.isStatic(modifiers);
+            final boolean isFinal = Modifier.isFinal(modifiers);
+            final boolean isPrivate = Modifier.isPrivate(modifiers);
+            final boolean declaredByObject = method.getDeclaringClass().equals(Object.class);
+
+            if (isFinal && !isStatic && !isPrivate && !declaredByObject) {
+                throw new IllegalStateException("The proxied class candidate " + ct.getName() + " contains a final method '" + method.getName() + "'");
             }
         }
     }
