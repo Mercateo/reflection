@@ -3,9 +3,11 @@ package com.mercateo.reflection;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
-import com.mercateo.reflection.proxy.ProxyFactory;
+import com.mercateo.reflection.proxy.ProxyCache;
 
 public class Call<T> {
+
+    private final static ProxyCache proxyCache = new ProxyCache();
 
     private final Class<T> clazz;
 
@@ -20,11 +22,12 @@ public class Call<T> {
     }
 
     public static <T> Call<T> of(Class<T> clazz, Consumer<T> invocation) {
-        final T proxy = ProxyFactory.createProxy(clazz);
-        invocation.accept(proxy);
+        final T proxy = proxyCache.createProxy(clazz);
 
-        // noinspection unchecked
-        return ((InvocationRecorder<T>) proxy).getInvocationRecordingResult();
+        synchronized (proxy) {
+            invocation.accept(proxy);
+            return ((InvocationRecorder<T>) proxy).getInvocationRecordingResult();
+        }
     }
 
     public static <T> Method methodOf(Class<T> clazz, Consumer<T> invocation) {

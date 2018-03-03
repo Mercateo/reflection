@@ -1,5 +1,6 @@
 package com.mercateo.reflection;
 
+import com.mercateo.reflection.proxy.ProxyCache;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -18,9 +19,16 @@ public class Benchmarks {
 
     static Test proxy = createProxy();
 
+    static ProxyCache proxyCache = new ProxyCache();
+
     @Benchmark
     public static Test createProxy() {
         return ProxyFactory.createProxy(Test.class);
+    }
+
+    @Benchmark
+    public static Test createCachedProxy() {
+        return proxyCache.createProxy(Test.class);
     }
 
     @Benchmark
