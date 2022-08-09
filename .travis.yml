@@ -8,9 +8,7 @@ cache:
     - $HOME/.m2
 before_install:
   - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode| $GPG_EXECUTABLE --import; fi
-  - echo "shnitt 1"
   - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
-  - echo "shnitt 2"
 script: "mvn -e -B verify"
 after_success: "mvn clean verify jacoco:report coveralls:report"
 deploy:
